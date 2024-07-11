@@ -1,26 +1,15 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const User = require("../models/createUser.js");
+import express from "express";
+import routes from "./routes.js";
+import connectDatabase from "./database/database.js";
 
 const app = express();
 app.use(express.json());
+app.use(routes);
 
-app.post("/usuarios", async (req, res) => {
-  const userData = req.body;
-
-  try {
-    const newUser = await User.create(userData); // Utiliza o método create do modelo User
-    return res.status(200).json(newUser);
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
-});
-
-mongoose
-  .connect(
-    "mongodb+srv://joelprodrigues25:Asdqwe00*@cluster0.iwggpuq.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+connectDatabase
+  .then(() =>
+    app.listen(3000, () =>
+      console.log("banco de dados conectado e servidor rodando na porta 3000")
+    )
   )
-  .then(() => console.log("banco de dados conectado"))
-  .catch(() => console.log("Deu ruim!"));
-
-app.listen(3000);
+  .catch((error) => console.log(error));
